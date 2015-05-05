@@ -1,0 +1,11 @@
+base_directory: "shortcodes"
+class_directory: "library"
+template_directory: "twig"
+template_prefix: "_"
+default_template: "_shortcodes.twig"
+tags:
+  - class: '\Maiorano\Shortcodes\Library\Age'
+  - class: '\Maiorano\Shortcodes\Library\Ipsum'
+  - name: foo
+    atts:
+      bar: 'baz'

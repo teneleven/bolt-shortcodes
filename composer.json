@@ -1,0 +1,27 @@
+{
+    "name": "maiorano84/bolt-shortcodes",
+    "description": "Include Shortcodes in your Bolt application",
+    "type": "bolt-extension",
+    "require": {
+        "bolt/bolt": ">=2.0.0,<3.0.0"
+    },
+    "license": "GPL-2.0",
+    "authors": [
+        {
+            "name": "Matt Maiorano", 
+            "email": "maiorano84@gmail.com"
+        }
+    ],
+    "require": {
+      "maiorano84/shortcodes": "~1.0"
+    },
+    "autoload": {
+        "files": [
+            "init.php"
+        ],
+        "psr-4": {
+            "Bolt\\Extension\\Maiorano\\BoltShortcodes\\": "",
+            "Bolt\\Shortcodes\\": "src/"
+        }
+    }
+}
