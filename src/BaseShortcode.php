@@ -2,8 +2,11 @@
 namespace Bolt\Shortcodes;
 
 use Maiorano\Shortcodes\Contracts\ShortcodeInterface;
-use Maiorano\Shortcodes\Contracts\Traits\Shortcode;
+use Maiorano\Shortcodes\Contracts\AttributeInterface;
+use Maiorano\Shortcodes\Contracts\Traits;
 
-abstract class BaseShortcode implements ShortcodeInterface{
-    use Shortcode;
+abstract class BaseShortcode implements ShortcodeInterface, AttributeInterface{
+    use Traits\Shortcode, Traits\Attribute;
+
+    protected $attributes = [];
 }
