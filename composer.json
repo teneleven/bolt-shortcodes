@@ -9,7 +9,7 @@
     "authors": [
         {
             "name": "Matt Maiorano", 
-            "email": "maiorano84@gmail.com"
+            "email": "maiorano84@hotmail.com"
         }
     ],
     "require": {
@@ -20,8 +20,8 @@
             "init.php"
         ],
         "psr-4": {
-            "Bolt\\Extension\\Maiorano\\BoltShortcodes\\": "",
-            "Bolt\\Shortcodes\\": "src/"
+            "Bolt\\Extension\\Maiorano\\BoltShortcodes\\": ["", "src/"],
+            "Bolt\\Shortcodes\\": "lib/Shortcodes/"
         }
     }
 }
