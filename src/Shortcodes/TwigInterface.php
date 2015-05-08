@@ -1,7 +1,20 @@
 <?php
 namespace Bolt\Shortcodes;
 
-interface TwigInterface {
+/**
+ * Interface TwigInterface
+ * @package Bolt\Shortcodes
+ */
+interface TwigInterface
+{
+    /**
+     * @return mixed
+     */
     public function getTemplate();
-    public function render(array $data=[]);
+
+    /**
+     * @param array $data
+     * @return mixed
+     */
+    public function render(array $data = []);
 }

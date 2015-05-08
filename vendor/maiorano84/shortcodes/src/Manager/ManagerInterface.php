@@ -4,7 +4,7 @@ namespace Maiorano\Shortcodes\Manager;
 use Maiorano\Shortcodes\Contracts\ShortcodeInterface;
 
 /**
- * Interface ShortcodeManagerInterface
+ * Interface ManagerInterface
  * @package Maiorano\Shortcodes\Manager
  */
 interface ManagerInterface

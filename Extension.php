@@ -6,12 +6,30 @@ use Bolt\Shortcodes\TwigShortcode;
 use Maiorano\Shortcodes\Manager\ShortcodeManager;
 use Symfony\Component\ClassLoader\Psr4ClassLoader;
 
-class Extension extends BaseExtension{
+/**
+ * Class Extension
+ * @package Bolt\Extension\Maiorano\BoltShortcodes
+ */
+class Extension extends BaseExtension
+{
+    /**
+     * @var ManagerInterface
+     */
     private $manager;
-    public function getName(){
+
+    /**
+     * @return string
+     */
+    public function getName()
+    {
         return "bolt-shortcodes";
     }
-    public function initialize(){
+
+    /**
+     * @return void
+     */
+    public function initialize()
+    {
         $themeBase = implode(DIRECTORY_SEPARATOR, [
             $this->app['resources']->getPath('templatespath'),
             $this->config['base_directory']
@@ -22,43 +40,60 @@ class Extension extends BaseExtension{
         ]);
 
         $this->setupAutoloader([
-            'Bolt\\Shortcodes\\'=>[
-                'shortcodes.theme'=>[$themeBase, $this->config['class_directory']],
-                'shortcodes.global'=>[$globalBase, $this->config['class_directory']],
-                'shortcodes.default'=>[__DIR__, 'src', 'Shortcodes']
+            'Bolt\\Shortcodes\\' => [
+                'shortcodes.theme' => [$themeBase, $this->config['class_directory']],
+                'shortcodes.global' => [$globalBase, $this->config['class_directory']],
+                'shortcodes.default' => [__DIR__, 'src', 'Shortcodes']
             ],
             'Maiorano\\Shortcodes\\' => [
-                'shortcodes.vendor'=> [__DIR__, 'vendor', 'maiorano84', 'shortcodes', 'src']
+                'shortcodes.vendor' => [__DIR__, 'vendor', 'maiorano84', 'shortcodes', 'src']
             ]
         ]);
         $this->setupTwigLoader([
-            'shortcodes.theme'=>[$themeBase, $this->config['template_directory']],
-            'shortcodes.global'=>[$globalBase, $this->config['template_directory']]
+            'shortcodes.theme' => [$themeBase, $this->config['template_directory']],
+            'shortcodes.global' => [$globalBase, $this->config['template_directory']]
         ]);
         $this->addTwigFilter('do_shortcode', 'doShortcode');
         $this->addTwigFunction('do_shortcode', 'doShortcode');
         $this->setupManager();
     }
-    public function doShortcode($content, $tags=null, $nested=false){
+
+    /**
+     * @param $content
+     * @param null $tags
+     * @param bool $nested
+     * @return \Twig_Markup
+     */
+    public function doShortcode($content, $tags = null, $nested = false)
+    {
         return new \Twig_Markup($this->manager->doShortcode($content, $tags, $nested), 'UTF-8');
     }
-    private function setupAutoloader(array $paths = []){
-        require_once __DIR__.'/src/ClassLoader/Psr4ClassLoader.php';
+
+    /**
+     * @param array $paths
+     */
+    private function setupAutoloader(array $paths = [])
+    {
+        require_once __DIR__ . '/src/ClassLoader/Psr4ClassLoader.php';
 
         $loader = new Psr4ClassLoader();
-        foreach($paths as $ns=>$path){
-            foreach($path as $k=>$dir){
+        foreach ($paths as $ns => $path) {
+            foreach ($path as $k => $dir) {
                 $loader->addPrefix($ns, implode(DIRECTORY_SEPARATOR, $dir));
             }
         }
         $loader->register();
     }
-    private function setupTwigLoader(array $paths = []){
-        foreach($paths as $ns=>$path){
-            try{
+
+    /**
+     * @param array $paths
+     */
+    private function setupTwigLoader(array $paths = [])
+    {
+        foreach ($paths as $ns => $path) {
+            try {
                 $this->app['twig.loader.filesystem']->addPath(implode(DIRECTORY_SEPARATOR, $path));
-            }
-            catch(\Twig_Error_Loader $e){
+            } catch (\Twig_Error_Loader $e) {
                 continue;
             }
         }
@@ -73,42 +108,46 @@ class Extension extends BaseExtension{
         ));
         $this->app['twig.loader']->addLoader($fallback);
         $this->app['twig']->addGlobal('shortcode', [
-            'manager'=>$this->manager,
-            'paths'=>[
-                'theme'=>$this->app['paths']['theme'].$this->config['base_directory'].'/'.$this->config['template_directory'],
-                'global'=>$this->app['paths']['extensions'].$this->config['base_directory'].'/'.$this->config['template_directory']
+            'manager' => $this->manager,
+            'paths' => [
+                'theme' => $this->app['paths']['theme'] . $this->config['base_directory'] . '/' . $this->config['template_directory'],
+                'global' => $this->app['paths']['extensions'] . $this->config['base_directory'] . '/' . $this->config['template_directory']
             ]
         ]);
     }
-    private function setupManager(){
+
+    /**
+     * @throws \Maiorano\Shortcodes\Exceptions\RegisterException
+     */
+    private function setupManager()
+    {
         $this->manager = new ShortcodeManager;
-        foreach($this->config['tags'] as $tag){
+        foreach ($this->config['tags'] as $tag) {
             $shortcode = $this->buildShortcode($tag);
             $this->manager->register($shortcode);
         }
     }
-    private function buildShortcode($tag){
-        if(isset($tag['class'])){
+
+    /**
+     * @param array $tag
+     * @return ShortcodeInterface
+     */
+    private function buildShortcode($tag)
+    {
+        if (isset($tag['class'])) {
             $reflection = new \ReflectionClass($tag['class']);
-            if($reflection->isSubclassOf('\\Bolt\\Shortcodes\\BaseShortcode')){
+            if ($reflection->isSubclassOf('\\Bolt\\Shortcodes\\BaseShortcode')) {
                 $shortcode = $reflection->newInstance($this->app);
                 $shortcode->configure($tag, $this->config);
-            }
-            else{
+            } else {
                 $shortcode = $reflection->newInstance();
             }
-        }
-        else{
+        } else {
             $atts = isset($tag['attributes']) ? $tag['attributes'] : [];
             $shortcode = new TwigShortcode($this->app, $tag['name'], $atts);
             $shortcode->configure($tag, $this->config);
         }
+
         return $shortcode;
     }
 }
-
-
-
-
-
-
