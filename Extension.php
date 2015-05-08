@@ -8,54 +8,42 @@ use Symfony\Component\ClassLoader\Psr4ClassLoader;
 
 class Extension extends BaseExtension{
     private $manager;
-    private $themeBase;
-    private $globalBase;
     public function getName(){
         return "bolt-shortcodes";
     }
     public function initialize(){
-        $this->themeBase = implode(DIRECTORY_SEPARATOR, [
+        $themeBase = implode(DIRECTORY_SEPARATOR, [
             $this->app['resources']->getPath('templatespath'),
             $this->config['base_directory']
         ]);
-        $this->globalBase = implode(DIRECTORY_SEPARATOR, [
+        $globalBase = implode(DIRECTORY_SEPARATOR, [
             $this->app['resources']->getPath('extensions'),
             $this->config['base_directory']
         ]);
 
         $this->setupAutoloader([
             'Bolt\\Shortcodes\\'=>[
-                'shortcodes.theme'=>[$this->themeBase, $this->config['class_directory']],
-                'shortcodes.global'=>[$this->globalBase, $this->config['class_directory']],
-                'shortcodes.default'=>[__DIR__, 'lib', 'Shortcodes']
+                'shortcodes.theme'=>[$themeBase, $this->config['class_directory']],
+                'shortcodes.global'=>[$globalBase, $this->config['class_directory']],
+                'shortcodes.default'=>[__DIR__, 'src', 'Shortcodes']
             ],
             'Maiorano\\Shortcodes\\' => [
                 'shortcodes.vendor'=> [__DIR__, 'vendor', 'maiorano84', 'shortcodes', 'src']
-            ],
-            'Bolt\\Extension\\Maiorano\\BoltShortcodes\\' => [
-                'shortcodes.source' => [__DIR__, 'src']
             ]
         ]);
         $this->setupTwigLoader([
-            'shortcodes.theme'=>[$this->themeBase, $this->config['template_directory']],
-            'shortcodes.global'=>[$this->globalBase, $this->config['template_directory']]
+            'shortcodes.theme'=>[$themeBase, $this->config['template_directory']],
+            'shortcodes.global'=>[$globalBase, $this->config['template_directory']]
         ]);
         $this->addTwigFilter('do_shortcode', 'doShortcode');
         $this->addTwigFunction('do_shortcode', 'doShortcode');
         $this->setupManager();
-        $this->app['twig']->addGlobal('shortcode', [
-            'manager'=>$this->manager,
-            'paths'=>[
-                'theme'=>$this->app['paths']['theme'].$this->config['base_directory'].'/'.$this->config['template_directory'],
-                'global'=>$this->app['paths']['extensions'].$this->config['base_directory'].'/'.$this->config['template_directory']
-            ]
-        ]);
     }
     public function doShortcode($content, $tags=null, $nested=false){
         return new \Twig_Markup($this->manager->doShortcode($content, $tags, $nested), 'UTF-8');
     }
     private function setupAutoloader(array $paths = []){
-        require_once __DIR__.'/lib/ClassLoader/Psr4ClassLoader.php';
+        require_once __DIR__.'/src/ClassLoader/Psr4ClassLoader.php';
 
         $loader = new Psr4ClassLoader();
         foreach($paths as $ns=>$path){
@@ -84,35 +72,38 @@ class Extension extends BaseExtension{
             </div>'
         ));
         $this->app['twig.loader']->addLoader($fallback);
+        $this->app['twig']->addGlobal('shortcode', [
+            'manager'=>$this->manager,
+            'paths'=>[
+                'theme'=>$this->app['paths']['theme'].$this->config['base_directory'].'/'.$this->config['template_directory'],
+                'global'=>$this->app['paths']['extensions'].$this->config['base_directory'].'/'.$this->config['template_directory']
+            ]
+        ]);
     }
     private function setupManager(){
         $this->manager = new ShortcodeManager;
         foreach($this->config['tags'] as $tag){
-            if(isset($tag['class'])){
-                $shortcode = $this->buildShortcode($tag['class']);
-            }
-            else{
-
-                $shortcode = $this->getDefaultShortcode($tag);
-            }
+            $shortcode = $this->buildShortcode($tag);
             $this->manager->register($shortcode);
         }
     }
-    private function buildShortcode($class){
-        $reflection = new \ReflectionClass($class);
-        if($reflection->isSubclassOf('\\Bolt\\Shortcodes\\BaseShortcode')){
-            $shortcode = $reflection->newInstanceArgs($this->app);
+    private function buildShortcode($tag){
+        if(isset($tag['class'])){
+            $reflection = new \ReflectionClass($tag['class']);
+            if($reflection->isSubclassOf('\\Bolt\\Shortcodes\\BaseShortcode')){
+                $shortcode = $reflection->newInstance($this->app);
+                $shortcode->configure($tag, $this->config);
+            }
+            else{
+                $shortcode = $reflection->newInstance();
+            }
         }
         else{
-            $shortcode = $reflection->newInstance();
+            $atts = isset($tag['attributes']) ? $tag['attributes'] : [];
+            $shortcode = new TwigShortcode($this->app, $tag['name'], $atts);
+            $shortcode->configure($tag, $this->config);
         }
         return $shortcode;
-    }
-    private function getDefaultShortcode($tag){
-        $atts = isset($tag['attributes']) ? $tag['attributes'] : [];
-        $default = new TwigShortcode($this->app, $this->config, $tag['name'], $atts);
-        $default->findTemplate($tag, $this->config);
-        return $default;
     }
 }
 

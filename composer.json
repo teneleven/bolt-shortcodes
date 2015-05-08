@@ -20,8 +20,8 @@
             "init.php"
         ],
         "psr-4": {
-            "Bolt\\Extension\\Maiorano\\BoltShortcodes\\": ["", "src/"],
-            "Bolt\\Shortcodes\\": "lib/Shortcodes/"
+            "Bolt\\Extension\\Maiorano\\BoltShortcodes\\": "",
+            "Bolt\\Shortcodes\\": "src/Shortcodes/"
         }
     }
 }
