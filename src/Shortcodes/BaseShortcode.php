@@ -23,7 +23,7 @@ abstract class BaseShortcode implements ShortcodeInterface, AttributeInterface, 
      */
     protected $twig;
     /**
-     * @var
+     * @var string
      */
     protected $name;
     /**
@@ -31,7 +31,7 @@ abstract class BaseShortcode implements ShortcodeInterface, AttributeInterface, 
      */
     protected $attributes = [];
     /**
-     * @var
+     * @var string
      */
     protected $template;
 

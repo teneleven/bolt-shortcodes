@@ -1,7 +1,6 @@
 <?php
 namespace Bolt\Shortcodes;
 
-class Ipsum extends BaseShortcode
-{
+class Ipsum extends BaseShortcode{
     protected $name = 'ipsum';
 }

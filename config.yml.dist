@@ -1,3 +1,5 @@
+# This is the config file for the Bolt Shortcodes extension.
+
 base_directory: shortcodes
 class_directory: library
 template_directory: twig
@@ -7,3 +9,17 @@ tags:
   - name: simpleform
     attributes:
       form_name: contact
+#  - class: '\Bolt\Shortcodes\Age'
+#  - class: '\Bolt\Shortcodes\Ipsum'
+
+# The following are the definitions for each setting:
+# - base_directory: The directory containing all of your classes and templates
+# - class_directory: The directory inside the base directory which stores all classes under the \Bolt\Shortcodes namespace
+# - template_directory: The directory inside the base directory which stores all twig files
+# - default_prefix: If no template name is provided, the extension will search within templates with this prefix and the shortcode name
+# - default_template: If no template could be found, the extension will search for this template name for rendering
+# - tags: Registration of all Bolt Shortcodes
+#   - name: The name of the Shortcode Bolt responds to (ie: foo will respond to all instances of [foo])
+#   - attributes: Key/Value pairs of all default attributes this Shortcode may use
+#   - class: If the Shortcode is set up as a self-contained class, you must provide the fully qualified name (ie: '\Bolt\Shortcodes\Foo')
+#   - template_name (optional): The name of the template used for this specific shortcode
