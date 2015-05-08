@@ -2,6 +2,7 @@
     "name": "maiorano84/bolt-shortcodes",
     "description": "Include Shortcodes in your Bolt application",
     "type": "bolt-extension",
+    "minimum-stability": "dev"
     "require": {
         "bolt/bolt": ">=2.0.0,<3.0.0"
     },
