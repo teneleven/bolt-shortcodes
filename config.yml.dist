@@ -4,7 +4,6 @@ template_directory: twig
 default_prefix: '_'
 default_template: _shortcodes.twig
 tags:
-  - class: '\Bolt\Shortcodes\Ipsum'
   - name: simpleform
     attributes:
       form_name: contact
