@@ -31,7 +31,7 @@ class Extension extends BaseExtension
     public function initialize()
     {
         $themeBase = implode(DIRECTORY_SEPARATOR, [
-            $this->app['resources']->getPath('templatespath'),
+            $this->app['resources']->getPath('themepath'),
             $this->config['base_directory']
         ]);
         $globalBase = implode(DIRECTORY_SEPARATOR, [
