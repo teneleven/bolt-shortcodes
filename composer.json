@@ -1,6 +1,7 @@
 {
     "name": "maiorano84/bolt-shortcodes",
     "description": "Include Shortcodes in your Bolt application",
+    "keywords": ["wordpress", "shortcode", "bbcode"],
     "type": "bolt-extension",
     "require": {
         "bolt/bolt": ">=2.0.0,<3.0.0"
