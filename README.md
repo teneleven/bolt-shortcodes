@@ -1,8 +1,6 @@
 # Bolt Shortcodes
 Simple Shortcode implementation for BoltCMS
 
-======================================================================
-
 ## Requirements
 Bolt Shortcodes requires PHP 5.4 or greater.
 
@@ -29,11 +27,11 @@ This extension primarily looks for Twig templates and Shortcode classes in both 
 
 Out of the box, the Extension will look for classes and templates within the following directories:
 
-** Shortcode Classes:**
+**Shortcode Classes:**
 * {your-theme}/shortcodes/library
 * {extensions}/shortcodes/library
 
-** Shortcode Templates:**
+**Shortcode Templates:**
 * {your-theme}/shortcodes/twig
 * {extensions}/shortcodes/twig
 
@@ -58,7 +56,7 @@ If you have the SimpleForms extension installed already, you can render out your
 
 * `{{ content }}` - The content - if any - that was parsed from that particular shortcode instance (ie: [foo]Content[/foo])
 * `{{ attributes.bar }}` - The attributes - if any - that were parsed from that particular shortcode instance (ie: [foo bar="baz"/])
-* `{{ tag }} - The name of the shortcode
+* `{{ tag }}` - The name of the shortcode
 
 **Custom Shortcode**
 
@@ -125,4 +123,4 @@ If you want to render the contents of your editor, you may also use `do_shortcod
 
 By default, Aliasing is not supported in either the TwigShortcode or BaseShortcode classes. It is recommended that you set up each Shortcode in your configuration file.
 
-However, if you would like a custom shortcode to utilize aliases, feel free to use the `\Maiorano\Shortcodes\Contracts\AliasInterface' Interface and '\Maiorano\Shortcodes\Contracts\Traits\Alias' Trait to bootstrap Aliasing capabilities. All aliases defined in your custom class will be available upon registration.
+However, if you would like a custom shortcode to utilize aliases, feel free to use the `\Maiorano\Shortcodes\Contracts\AliasInterface` Interface and `\Maiorano\Shortcodes\Contracts\Traits\Alias` Trait to bootstrap Aliasing capabilities. All aliases defined in your custom class will be available upon registration.
