@@ -5,6 +5,7 @@ use Bolt\BaseExtension;
 use Bolt\Shortcodes\TwigShortcode;
 use Maiorano\Shortcodes\Manager\ShortcodeManager;
 use Symfony\Component\ClassLoader\Psr4ClassLoader;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class Extension
@@ -53,6 +54,7 @@ class Extension extends BaseExtension
             'shortcodes.theme' => [$themeBase, $this->config['template_directory']],
             'shortcodes.global' => [$globalBase, $this->config['template_directory']]
         ]);
+
         $this->addTwigFilter('do_shortcode', 'doShortcode');
         $this->addTwigFunction('do_shortcode', 'doShortcode');
         $this->setupManager();
@@ -66,6 +68,10 @@ class Extension extends BaseExtension
      */
     public function doShortcode($content, $tags = null, $nested = false)
     {
+        if (!$this->isEnabled()) {
+            return $content;
+        }
+
         return new \Twig_Markup($this->manager->doShortcode($content, $tags, $nested), 'UTF-8');
     }
 
@@ -114,6 +120,24 @@ class Extension extends BaseExtension
                 'global' => $this->app['paths']['extensions'] . $this->config['base_directory'] . '/' . $this->config['template_directory']
             ]
         ]);
+    }
+
+    /**
+     * Disable the extension in live edit mode.
+     *
+     * @return bool if the extension is enabled
+     */
+    private function isEnabled()
+    {
+        // Get a request object, if not initialized by Silex yet, we'll create our own
+        try {
+            $request = $this->app['request'];
+        } catch (\RuntimeException $e) {
+            $request = Request::createFromGlobals();
+        }
+
+        // only enable if we're not in live edit mode
+        return !((bool) $request->get('_live-editor-preview'));
     }
 
     /**
